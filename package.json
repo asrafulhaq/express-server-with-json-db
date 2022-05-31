@@ -1,0 +1,18 @@
+{
+  "name": "expser",
+  "version": "1.0.0",
+  "description": "This is our first express server for data project ",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "author": "Asraful Haque",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "nodemon": "^2.0.16"
+  }
+} 
+
