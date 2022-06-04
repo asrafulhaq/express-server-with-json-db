@@ -1,6 +1,7 @@
 const { count } = require('console');
 const fs = require('fs');
 const path = require('path');
+const Student = require('../models/students');
 
 
 // Students data model 
@@ -20,39 +21,34 @@ const getLatestId = () => {
 }
 
 // Get all students
-const getAllStudents = (req, res) => {
+const getAllStudents = async (req, res) => {
 
+    const student_all = await Student.find(); 
 
-    if( students.length > 0 ){
-        res.status(200).json(students);
-    }else{
-        res.status(404).json({
-            message : "student data not found"
-        });
-    }
-    
-
+    res.status(200).json(student_all);
+ 
 }
 
 // Get all students
-const getSingleStudent = (req, res) => {
+const getSingleStudent = async (req, res) => {
     
     let id = req.params.id;
 
-    if( students.some( data => data.id == id ) ){
-        res.status(200).json(students.find(data => data.id == id));
-    }else{
-        res.status(404).json({
-            message : 'This Student data not found'
+    let student = await Student.findById(id);
+
+    if( !student ){
+        res.status(400).json({
+            message : "Student not found" 
         });
     }
 
+    res.status(200).json(student);  
 
     
 }
 
 // Get all students
-const createStudent = (req, res) => {
+const createStudent = async (req, res) => {
  
 
     if( req.body.name != '' ||  req.body.age != '' || req.body.skill != '' ){
@@ -63,7 +59,11 @@ const createStudent = (req, res) => {
             skill : req.body.skill
         });
     
-        fs.writeFileSync(path.join(__dirname, '../data/students.json') ,  JSON.stringify(students) );
+        const student_create = await Student.create({
+            name : req.body.name,
+            age : req.body.age,
+            skill : req.body.skill
+        });
     
         res.status(201).json({
             message : 'Student data created successfull'
@@ -85,23 +85,24 @@ const updateStudent = (req, res) => {
 }
 
 
+
+
 // Get all students
-const deleteStudent = (req, res) => {
+const deleteStudent = async (req, res) => {
     
     let id = req.params.id;
+    let delete_data = await Student.findById(id);
 
-    if( students.some( data => data.id == id ) ){
-
-        let updated_data = students.filter( data => data.id != id );
-        fs.writeFileSync(path.join(__dirname, '../data/students.json'), JSON.stringify(updated_data));
-        res.status(202).json({
-            message : 'Student Data deleted'
-        });
-    }else {
+    if( !delete_data ){
         res.status(400).json({
-            message : 'Student not found'
+            message : "Delete Student not found" 
         });
     }
+    let delete_student = await Student.findByIdAndDelete(id); 
+
+    res.status(200).json({
+        message : "Delete Student successful"
+    });
 
 }
 
